@@ -8,9 +8,10 @@ import { SECRETKEY } from "../services/jwt"
 import jwtService from "../services/jwt"
 
 //create a authenticate funtion 
-const authenticate = (req: Request & { user: any }, res: Response, next: NextFunction) => {
+
+export const authenticate = (req: Request & { user: any }, res: Response, next: NextFunction) => {
     try {
-        if(req.headers.authorization){
+        if(!req.headers.authorization){
             res.status(404).send({
                 status: false,
                 message: "Unauthorization not found"
@@ -36,6 +37,6 @@ const authenticate = (req: Request & { user: any }, res: Response, next: NextFun
         })
     }
 }
-export default {
-    authenticate
-}
+export default authenticate;
+
+
