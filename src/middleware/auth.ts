@@ -9,7 +9,11 @@ import jwtService from "../services/jwt"
 
 //create a authenticate funtion 
 
-export const authenticate = (req: Request & { user: any }, res: Response, next: NextFunction) => {
+interface Authentication extends Request {
+    user?: any;
+}
+
+const auth = (req:  Authentication, res: Response, next: NextFunction) => {
     try {
         if(!req.headers.authorization){
             res.status(404).send({
@@ -37,6 +41,6 @@ export const authenticate = (req: Request & { user: any }, res: Response, next: 
         })
     }
 }
-export default authenticate;
+export default auth;
 
 

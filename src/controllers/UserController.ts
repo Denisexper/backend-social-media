@@ -4,6 +4,10 @@ import bcrypt from 'bcrypt';
 import jwt from "../services/jwt"
 import { UserObject } from "../services/jwt";
 
+interface authentication extends Request{
+    user?: any
+}
+
 class UserController {
      async userRegister(req:Request,res:Response){
         try {
@@ -47,6 +51,23 @@ class UserController {
                 message:"Process failed"
             })
         }        
+     }
+     async getUser(req: Request, res: Response) {
+        try {
+            
+            const { id } = req.params;
+
+            const userFind = await User.findById(id).select('-password -__v -role')
+
+            res.send(userFind)
+
+        } catch (error) {
+            
+            res.send({
+                status:400,
+                message:"Process failed"
+            })
+        }
      }
      async userLogin(req:Request,res:Response){
         try {
@@ -116,6 +137,61 @@ class UserController {
 
                 message:"Error",
 
+                error
+            })
+        }
+     }
+     async getListUser(req: Request, res: Response){
+        try {
+            //convert to number the page
+            const page = Number(req.params.page) | 1
+            //convert to number the limit
+            const limit = Number(req.params.limit) | 3
+            //create the skip
+            const skip = (page - 1) * limit
+            //get all users
+            const data = await User.find().skip(skip).limit(limit).select('-password -__v -role')
+            const couterDocument = await User.countDocuments()
+            res.send({
+                status:true,
+                message:"list user",
+                couterDocument,
+                data
+            })
+        } catch (error) {
+            res.status(404).send({
+                status:false,
+                message:"Error",
+                error
+            })
+        }
+     }
+     async updateUser(req: authentication, res: Response){
+        try {
+           const userBody = req.body
+           const userTokem = req.user
+            
+        } catch (error) {
+            res.send({
+                status:false,
+                message:"Error",
+                error
+            })
+        }
+     }
+     //delete user solo para ordenar mi db aun falta arreglarlo con el jwtoken
+     async deleteUser(req: authentication, res: Response){
+        try {
+            const { id } = req.params
+            const deleteUser = await User.findByIdAndDelete(id)
+            res.send({
+                status:true,
+                message:"delete user",
+            })
+        } catch (error) {
+            res.send({
+                status:false,
+                message:"Error",
                 error
             })
         }
